@@ -19,7 +19,6 @@ class LoginController:
             return HttpResponse({'sucess': True, 'message': 'Login criado com sucesso!'}, 200)
         except IntegrityError as exc:
             if data.get('email') in str(exc).split('")')[0]:
-                print(exc)
                 return HttpResponse({'sucess': False, 'message': f'O email já esta sendo utilizado'}, 401)
             elif data.get('cpf') in str(exc).split('")')[0]:
                 return HttpResponse({'sucess': False, 'message': f'O cpf já esta sendo utilizado'}, 401)
