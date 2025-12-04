@@ -1,0 +1,6 @@
+alembic revision --autogenerate -m "Incluindo novo campo de imagem_url para catalogo"
+Para gerar o arquivo de migration
+
+
+alembic upgrade head
+Para efetivar a migração

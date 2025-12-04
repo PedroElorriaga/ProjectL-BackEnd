@@ -15,11 +15,12 @@ class CatalogRepository:
             raise Exception('O item ja existe!')
 
         new_item = Catalog(
-            perfume=data['perfume'],
+            perfume=data['perfume'].lower(),
             ml=data['ml'],
             preco=data['preco'],
             tipo=data['tipo'].upper(),
-            tags=data['tags']
+            tags=data['tags'].lower(),
+            imagem_url=data['imagem_url']
         )
         self.__mysql_connection.session.add(new_item)
         self.__mysql_connection.session.commit()
@@ -33,11 +34,13 @@ class CatalogRepository:
 
         for item in itens:
             response.append({
+                'id': item.id,
                 'perfume': item.perfume,
                 'ml': item.ml,
                 'preco': item.preco,
                 'tipo': item.tipo,
                 'tags': item.tags,
+                'imagem_url': item.imagem_url
             })
 
         return response
@@ -57,7 +60,7 @@ class CatalogRepository:
         if not item:
             raise Exception('Id não existe')
 
-        for field in ['perfume', 'ml', 'preco', 'tipo' 'tags']:
+        for field in ['perfume', 'ml', 'preco', 'tipo', 'tags', 'imagem_url']:
             if field in data:
                 setattr(item, field, data[field])
 

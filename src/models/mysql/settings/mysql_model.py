@@ -14,6 +14,7 @@ class Catalog(db.Model):
     tipo = db.Column(db.String(128), nullable=False)
     preco = db.Column(db.Float, nullable=False)
     tags_string = db.Column('tags', db.String(255), nullable=False)
+    imagem_url = db.Column(db.String(256))
 
     @property
     def tags(self):
