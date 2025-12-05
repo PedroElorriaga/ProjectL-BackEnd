@@ -16,6 +16,15 @@ def get_catalog() -> jsonify:
     return jsonify(response.body), response.status
 
 
+@catalog_route.route('/<int:id_perfume>', methods=['GET'])
+def get_one_perfume(id_perfume: int) -> jsonify:
+    catalog_repo = catalog_composer()
+
+    response = catalog_repo.get_perfume(id_perfume)
+
+    return jsonify(response.body), response.status
+
+
 @catalog_route.route('/', methods=['POST'])
 @token_required
 def add_perfume(user_token_information: tuple) -> jsonify:

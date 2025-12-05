@@ -19,7 +19,7 @@ class CatalogRepository:
             ml=data['ml'],
             preco=data['preco'],
             tipo=data['tipo'].upper(),
-            tags=data['tags'].lower(),
+            tags=data['tags'],
             imagem_url=data['imagem_url']
         )
         self.__mysql_connection.session.add(new_item)
@@ -42,6 +42,24 @@ class CatalogRepository:
                 'tags': item.tags,
                 'imagem_url': item.imagem_url
             })
+
+        return response
+
+    def get_item(self, id: int) -> dict | None:
+        item = self.__table_model.query.get(id)
+
+        if not item:
+            raise Exception('O item não existe no catalogo')
+
+        response = {
+            'id': item.id,
+            'perfume': item.perfume,
+            'ml': item.ml,
+            'preco': item.preco,
+            'tipo': item.tipo,
+            'tags': item.tags,
+            'imagem_url': item.imagem_url
+        }
 
         return response
 

@@ -23,7 +23,10 @@ class CatalogController:
         except Exception as exc:
             if str(exc) == 'Ocorreu um erro interno ao processar o token':
                 return HttpResponse({'sucess': False, 'message': str(exc)}, 500)
-            return HttpResponse({'sucess': False, 'message': str(exc)}, 401)
+            if str(exc) == 'O item ja existe!':
+                return HttpResponse({'sucess': False, 'message': str(exc)}, 401)
+            print(exc)
+            return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
     def get_all_perfume(self) -> HttpResponse:
         try:
@@ -33,6 +36,18 @@ class CatalogController:
         except Exception as exc:
             if str(exc) == 'Não existe itens no catalogo':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
+            print(exc)
+            return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
+
+    def get_perfume(self, id: int) -> HttpResponse:
+        try:
+            response = self.__catalog_repository.get_item(id)
+
+            return HttpResponse({'sucess': True, 'message': response}, 200)
+        except Exception as exc:
+            if str(exc) == 'Não esse item no catalogo':
+                return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
+            print(exc)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
     def delete_perfume(self, id_perfume: int, user_token_information: tuple) -> HttpResponse:
@@ -48,6 +63,7 @@ class CatalogController:
         except Exception as exc:
             if str(exc) == 'Id não existe':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
+            print(exc)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
     def patch_perfume(self, id_perfume: int, data: dict, user_token_information: tuple) -> HttpResponse:
@@ -63,4 +79,5 @@ class CatalogController:
         except Exception as exc:
             if str(exc) == 'Id não existe':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
+            print(exc)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
