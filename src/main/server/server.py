@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 from flask_cors import CORS
 
 
-load_dotenv()
+# load_dotenv()
 BASE_DIR = os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', '..', '..'))
 
