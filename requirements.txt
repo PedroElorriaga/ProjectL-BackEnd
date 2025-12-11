@@ -1,4 +1,3 @@
-Resolving dependencies...
 INFO:pipenv.patched.pip._internal.resolution.resolvelib.reporter:Reporter.starting()
 INFO:pipenv.patched.pip._internal.resolution.resolvelib.reporter:Reporter.adding_requirement(SpecifierRequirement('flask'), None)
 INFO:pipenv.patched.pip._internal.operations.prepare:Collecting flask (from -r C:\Users\Pedro\AppData\Local\Temp\pipenv-8oos6zsn-requirements\pipenv-k8kd_rok-constraints.txt (line 8))
