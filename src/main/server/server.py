@@ -26,6 +26,6 @@ def create_app() -> Flask:
     app.register_blueprint(catalog_route, url_prefix='/catalogo')
     app.register_blueprint(login_route, url_prefix='/login')
 
-    CORS(app, resources={r"/*": {"origins": "*"}})
+    CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 
     return app
