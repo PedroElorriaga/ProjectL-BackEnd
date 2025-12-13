@@ -20,17 +20,17 @@ def create_app() -> Flask:
     app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1,
                             x_proto=1, x_host=1, x_prefix=1)
 
+    @app.before_request
+    def force_https():
+        if not request.is_secure:
+            request.environ['wsgi.url_scheme'] = 'https'
+
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'SQLALCHEMY_DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
-
-    @app.before_request
-    def force_https():
-        if not request.is_secure:
-            request.environ['wsgi.url_scheme'] = 'https'
 
     app.register_blueprint(catalog_route, url_prefix='/catalogo')
     app.register_blueprint(login_route, url_prefix='/login')
