@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, request
 from src.main.routes.catalog import catalog_route
 from src.main.routes.login import login_route
 from src.models.mysql.settings.mysql_model import db
@@ -26,6 +26,11 @@ def create_app() -> Flask:
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
     db.init_app(app)
+
+    @app.before_request
+    def force_https():
+        if app.env != 'development' and not request.is_secure:
+            request.environ['wsgi.url_scheme'] = 'https'
 
     app.register_blueprint(catalog_route, url_prefix='/catalogo')
     app.register_blueprint(login_route, url_prefix='/login')
