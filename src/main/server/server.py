@@ -5,7 +5,6 @@ from src.models.mysql.settings.mysql_model import db
 import os
 from dotenv import load_dotenv
 from flask_cors import CORS
-from werkzeug.middleware.proxy_fix import ProxyFix
 
 
 load_dotenv()
@@ -16,14 +15,6 @@ BASE_DIR = os.path.abspath(os.path.join(
 def create_app() -> Flask:
     app = Flask(__name__, static_folder=os.path.join(
         BASE_DIR, 'static'), static_url_path='/static')
-
-    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1,
-                            x_proto=1, x_host=1, x_prefix=1)
-
-    @app.before_request
-    def force_https():
-        if not request.is_secure:
-            request.environ['wsgi.url_scheme'] = 'https'
 
     app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
