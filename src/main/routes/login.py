@@ -36,6 +36,7 @@ def make_login(id_credential: int | None = None) -> make_response:
         # Impede que o JavaScript leia o cookie (protege contra XSS).
         secure=True,  # Garante que o cookie só será enviado em HTTPS.
         samesite=None
+        domain='lorenci-perfumes-api.onrender.com'
     )
 
     return http_response
