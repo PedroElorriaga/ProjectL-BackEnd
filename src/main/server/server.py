@@ -29,7 +29,7 @@ def create_app() -> Flask:
 
     @app.before_request
     def force_https():
-        if app.env != 'development' and not request.is_secure:
+        if not request.is_secure:
             request.environ['wsgi.url_scheme'] = 'https'
 
     app.register_blueprint(catalog_route, url_prefix='/catalogo')
