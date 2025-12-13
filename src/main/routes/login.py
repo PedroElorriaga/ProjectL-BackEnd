@@ -35,7 +35,7 @@ def make_login(id_credential: int | None = None) -> make_response:
         httponly=True,
         # Impede que o JavaScript leia o cookie (protege contra XSS).
         secure=True,  # Garante que o cookie só será enviado em HTTPS.
-        samesite='Lax'  # Ajuda a mitigar ataques CSRF.
+        samesite='None'
     )
 
     return http_response
