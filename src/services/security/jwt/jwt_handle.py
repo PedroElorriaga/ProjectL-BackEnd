@@ -9,7 +9,7 @@ class JwtHandle:
 
     @staticmethod
     def gen_token(user_id: int, user_role: str) -> str:
-        expiration_time = datetime.now(timezone.utc) + timedelta(hours=1)
+        expiration_time = datetime.now(timezone.utc) + timedelta(hours=12)
 
         token = jwt.encode({
             'public_id': user_id, 'user_role': user_role, 'exp': expiration_time
@@ -21,7 +21,9 @@ class JwtHandle:
 def token_required(f) -> tuple:
     @wraps(f)
     def decorated(*args, **kwargs):
-        token = request.cookies.get('jwt_token')
+        token = request.headers.get('Authorization').split(' ')[1]
+
+        print(token)
 
         if not token:
             raise Unauthorized('Token is missing')
