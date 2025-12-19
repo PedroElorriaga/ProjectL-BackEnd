@@ -20,6 +20,9 @@ def create_app() -> Flask:
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv(
         'SQLALCHEMY_DATABASE_URI')
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+    app.config['CLOUDNARY_NAME'] = os.getenv('CLOUDNARY_NAME')
+    app.config['CLOUDNARY_API_KEY'] = os.getenv('CLOUDNARY_API_KEY')
+    app.config['CLOUDNARY_API_SECRET'] = os.getenv('CLOUDNARY_API_SECRET')
 
     db.init_app(app)
 
