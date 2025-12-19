@@ -70,7 +70,6 @@ def delete_perfume(user_token_information: tuple, id_perfume: int) -> jsonify:
 def update_perfume(user_token_information: tuple, id_perfume: int) -> jsonify:
     http_request = HttpRequest(request.json)
     catalog_repo = catalog_composer()
-    print(id_perfume)
 
     response = catalog_repo.patch_perfume(
         id_perfume, http_request.body, user_token_information)
