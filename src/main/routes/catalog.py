@@ -3,6 +3,7 @@ from src.services.http_types.http_requests import HttpRequest
 from src.composers.catalog.catalog_composer import catalog_composer
 from src.services.security.jwt.jwt_handle import token_required
 from werkzeug.exceptions import Unauthorized
+from src.services.image_uploader.cloudinary_handle import CloudinaryHandle
 
 catalog_route = Blueprint('catalogo', __name__)
 
@@ -28,7 +29,24 @@ def get_one_perfume(id_perfume: int) -> jsonify:
 @catalog_route.route('/', methods=['POST'])
 @token_required
 def add_perfume(user_token_information: tuple) -> jsonify:
-    http_request = HttpRequest(request.json)
+    text_data = request.form.to_dict()
+    image_file = request.files.get('imagem_url')
+    image_url = None
+
+    if image_file:
+        cloudirary_handle = CloudinaryHandle()
+        image_url = cloudirary_handle.upload_image(image_file)
+
+    processed_body = {
+        "perfume": text_data.get("perfume"),
+        "ml": int(text_data.get("ml", 0)),
+        "tipo": text_data.get("tipo"),
+        "preco": float(text_data.get("preco", 0)),
+        "tags": text_data.get("tags").split(','),
+        "imagem_url": image_url
+    }
+
+    http_request = HttpRequest(processed_body)
     catalog_repo = catalog_composer()
 
     response = catalog_repo.add_new_perfume(

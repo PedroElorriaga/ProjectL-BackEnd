@@ -23,8 +23,6 @@ def token_required(f) -> tuple:
     def decorated(*args, **kwargs):
         token = request.headers.get('Authorization').split(' ')[1]
 
-        print(token)
-
         if not token:
             raise Unauthorized('Token is missing')
 
