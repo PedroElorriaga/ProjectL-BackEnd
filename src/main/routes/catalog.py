@@ -8,20 +8,15 @@ from src.services.image_uploader.cloudinary_handle import CloudinaryHandle
 catalog_route = Blueprint('catalogo', __name__)
 
 
-@catalog_route.route('/', methods=['GET'])
-def get_catalog() -> jsonify:
-    catalog_repo = catalog_composer()
-
-    response = catalog_repo.get_all_perfume()
-
-    return jsonify(response.body), response.status
-
-
+@catalog_route.route('/', defaults={'id_perfume': None}, methods=['GET'])
 @catalog_route.route('/<int:id_perfume>', methods=['GET'])
-def get_one_perfume(id_perfume: int) -> jsonify:
+def get_catalog(id_perfume: int | None = None) -> jsonify:
     catalog_repo = catalog_composer()
 
-    response = catalog_repo.get_perfume(id_perfume)
+    if id_perfume:
+        response = catalog_repo.get_perfume(id_perfume)
+    else:
+        response = catalog_repo.get_perfume()
 
     return jsonify(response.body), response.status
 

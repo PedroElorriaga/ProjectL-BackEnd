@@ -28,26 +28,19 @@ class CatalogController:
             print(exc)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
-    def get_all_perfume(self) -> HttpResponse:
+    def get_perfume(self, id: int | None = None) -> HttpResponse:
         try:
-            response = self.__catalog_repository.get_all_itens()
-
-            return HttpResponse({'sucess': True, 'message': response}, 200)
-        except Exception as exc:
-            if str(exc) == 'Não existe itens no catalogo':
-                return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
-            print(exc)
-            return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
-
-    def get_perfume(self, id: int) -> HttpResponse:
-        try:
-            response = self.__catalog_repository.get_item(id)
+            if id:
+                response = self.__catalog_repository.get_item(id)
+            else:
+                response = self.__catalog_repository.get_all_itens()
 
             return HttpResponse({'sucess': True, 'message': response}, 200)
         except Exception as exc:
             if str(exc) == 'Não esse item no catalogo':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
-            print(exc)
+            if str(exc) == 'Não existe itens no catalogo':
+                return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
     def delete_perfume(self, id_perfume: int, user_token_information: tuple) -> HttpResponse:
