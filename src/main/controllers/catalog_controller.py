@@ -74,3 +74,8 @@ class CatalogController:
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
             print(exc)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
+
+    def get_filtered_perfumes(self, data: dict) -> HttpResponse:
+        response = self.__catalog_repository.get_all_itens_filtered(data)
+
+        return HttpResponse({'sucess': True, 'message': response}, 200)

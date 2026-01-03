@@ -15,6 +15,13 @@ def get_catalog(id_perfume: int | None = None) -> jsonify:
 
     if id_perfume:
         response = catalog_repo.get_perfume(id_perfume)
+    elif len(request.args) > 0:
+        response = catalog_repo.get_filtered_perfumes({
+            'perfume': request.args.get('perfume'),
+            'tipo': request.args.get('tipo'),
+            'preco': request.args.get('preco', type=float),
+            'tags_string': request.args.get('tags')
+        })
     else:
         response = catalog_repo.get_perfume()
 

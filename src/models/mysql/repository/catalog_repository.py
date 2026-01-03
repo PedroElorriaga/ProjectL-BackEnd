@@ -25,7 +25,7 @@ class CatalogRepository:
         self.__mysql_connection.session.add(new_item)
         self.__mysql_connection.session.commit()
 
-    def get_all_itens(self) -> List[object]:
+    def get_all_itens(self) -> List[object] | None:
         itens = self.__table_model.query.all()
         response = []
 
@@ -94,3 +94,26 @@ class CatalogRepository:
         )
 
         return item
+
+    def get_all_itens_filtered(self, data: dict) -> List[object] | None:
+        for field in ['perfume', 'ml', 'preco', 'tipo', 'tags_string']:
+            if field in data and data[field]:
+                # getattr transforma a string 'perfume' em Catalog.perfume - NAO ESQUECE PEDRONAUTA
+                column = getattr(Catalog, field)
+                itens = self.__mysql_connection.session.query(Catalog).filter(
+                    column.contains(data[field])).all()
+                break
+
+        response = []
+        for item in itens:
+            response.append({
+                'id': item.id,
+                'perfume': item.perfume,
+                'ml': item.ml,
+                'preco': item.preco,
+                'tipo': item.tipo,
+                'tags': item.tags,
+                'imagem_url': item.imagem_url
+            })
+
+        return response
