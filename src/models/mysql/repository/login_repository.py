@@ -25,7 +25,7 @@ class LoginRepository:
         self.__mysql_connection.session.add(new_login)
         self.__mysql_connection.session.commit()
 
-    def get_item(self, data: dict, id: int | None = None) -> Login:
+    def get_item(self, email: str, id: int | None = None) -> Login:
         if id:
             item = self.__table_model.query.get(id)
             if not item:
@@ -33,7 +33,7 @@ class LoginRepository:
 
             return item
 
-        item = self.__table_model.query.filter_by(email=data['email']).first()
+        item = self.__table_model.query.filter_by(email=email).first()
         if not item:
             raise Exception('Nenhum item foi encontrado com esse EMAIL')
 

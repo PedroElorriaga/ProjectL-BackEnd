@@ -3,6 +3,7 @@ from src.services.http_types.http_response import HttpResponse
 from sqlalchemy.exc import IntegrityError
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
 from src.services.security.jwt.jwt_handle import JwtHandle
+from src.main.dtos.login_dto import LoginResponseDTO, LoginRequestDTO
 
 
 class LoginController:
@@ -28,16 +29,20 @@ class LoginController:
 
     def get_login_credentials(self, data: dict, id: int | None = None) -> HttpResponse:
         try:
-            login_credential = self.__login_repository.get_item(data, id)
+            input_data = LoginRequestDTO(**data)
 
-            if not BcryptHandle.check_content(data['password'], login_credential.password):
+            login_credential = self.__login_repository.get_item(
+                input_data.email, id)
+
+            if not BcryptHandle.check_content(input_data.password, login_credential.password):
                 return HttpResponse(
                     {'sucess': False, 'message': 'Email ou senha incorretos'}, 401)
 
-            token_response = JwtHandle().gen_token(
+            JwtHandle().gen_token(
                 login_credential.id, login_credential.user)
 
-            return HttpResponse({'sucess': True, 'message': 'Login Efetuado com sucesso', 'token': token_response}, 200)
+            return HttpResponse(LoginResponseDTO(
+                sucess=True, message='Login Efetuado com sucesso'), 200)
         except Exception as exc:
             if str(exc) == 'Nenhum item foi encontrado com esse ID':
                 return HttpResponse({'sucess': False, 'message': 'Parece que esse ID não existe'}, 404)

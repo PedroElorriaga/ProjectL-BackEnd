@@ -16,6 +16,7 @@ mysqlclient = "*"
 flask-cors = "*"
 gunicorn = "*"
 cloudinary = "*"
+pydantic = "*"
 
 [dev-packages]
 

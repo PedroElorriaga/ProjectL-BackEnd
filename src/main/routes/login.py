@@ -28,4 +28,4 @@ def make_login(id_credential: int | None = None) -> jsonify:
     if response.status != 200:
         return jsonify(response.body), response.status
 
-    return jsonify(response.body), response.status
+    return jsonify(response.body.model_dump()), response.status
