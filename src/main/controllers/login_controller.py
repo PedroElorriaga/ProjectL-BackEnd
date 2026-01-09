@@ -1,21 +1,28 @@
-from src.models.mysql.repository.login_repository import LoginRepository
+from src.databases.postgres.repository.user_repository import UserRepository
 from src.services.http_types.http_response import HttpResponse
 from sqlalchemy.exc import IntegrityError
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
 from src.services.security.jwt.jwt_handle import JwtHandle
-from src.main.dtos.login_dto import LoginResponseDTO, LoginRequestDTO
+from src.main.dtos.login_dto import LoginResponseDTO, LoginRequestDTO, NewLoginRequestDTO
+from validate_docbr import CPF
 
 
 class LoginController:
-    def __init__(self, login_repository: LoginRepository):
+    def __init__(self, login_repository: UserRepository):
         self.__login_repository = login_repository
 
     def add_new_login(self, data: dict) -> HttpResponse:
         try:
-            password_hashed = BcryptHandle.hash_content(data['password'])
-            data['password'] = password_hashed
+            input_data = NewLoginRequestDTO(**data)
+            cpf = CPF()
 
-            self.__login_repository.add_item(data)
+            if not cpf.validate(input_data.cpf):
+                return HttpResponse({'sucess': False, 'message': f'Cpf inválido'}, 401)
+
+            password_hashed = BcryptHandle.hash_content(input_data.password)
+            input_data.password = password_hashed
+
+            self.__login_repository.add_item(input_data.model_dump())
 
             return HttpResponse({'sucess': True, 'message': 'Login criado com sucesso!'}, 200)
         except IntegrityError as exc:
@@ -25,6 +32,8 @@ class LoginController:
                 return HttpResponse({'sucess': False, 'message': f'O cpf já esta sendo utilizado'}, 401)
         except Exception as exc:
             print(exc)
+            if 'validation error for NewLoginRequestDTO' in str(exc):
+                return HttpResponse({'sucess': False, 'message': f'Email inválido'}, 401)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
     def get_login_credentials(self, data: dict, id: int | None = None) -> HttpResponse:
@@ -38,11 +47,11 @@ class LoginController:
                 return HttpResponse(
                     {'sucess': False, 'message': 'Email ou senha incorretos'}, 401)
 
-            JwtHandle().gen_token(
+            access_token = JwtHandle().gen_token(
                 login_credential.id, login_credential.user)
 
             return HttpResponse(LoginResponseDTO(
-                sucess=True, message='Login Efetuado com sucesso'), 200)
+                sucess=True, message='Login Efetuado com sucesso', access_token=access_token), 200)
         except Exception as exc:
             if str(exc) == 'Nenhum item foi encontrado com esse ID':
                 return HttpResponse({'sucess': False, 'message': 'Parece que esse ID não existe'}, 404)
