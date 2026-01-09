@@ -1,6 +1,6 @@
 from src.main.controllers.catalog_controller import CatalogController
-from src.models.mysql.repository.catalog_repository import CatalogRepository
-from src.models.mysql.settings.mysql_model import db, Catalog
+from src.databases.postgres.repository.catalog_repository import CatalogRepository
+from src.databases.postgres.model.catalog import db, Catalog
 
 
 def catalog_composer() -> CatalogController:

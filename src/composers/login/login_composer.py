@@ -1,11 +1,11 @@
-from src.models.mysql.settings.mysql_model import db, Login
-from src.models.mysql.repository.login_repository import LoginRepository
+from src.databases.postgres.model.user import db, User
+from src.databases.postgres.repository.user_repository import UserRepository
 from src.main.controllers.login_controller import LoginController
 
 
 def login_composer() -> LoginController:
-    login_repository = LoginRepository(db, Login)
+    user_repository = UserRepository(db, User)
     login_controller = LoginController(
-        login_repository)
+        user_repository)
 
     return login_controller
