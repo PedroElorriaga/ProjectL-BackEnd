@@ -6,7 +6,6 @@ name = "pypi"
 [packages]
 flask = "*"
 flask-sqlalchemy = "*"
-pymysql = "*"
 cryptography = "*"
 flask-jwt-extended = "*"
 bcrypt = "*"
@@ -17,6 +16,8 @@ flask-cors = "*"
 gunicorn = "*"
 cloudinary = "*"
 pydantic = "*"
+psycopg = {extras = ["binary"], version = "*"}
+validate-docbr = "*"
 
 [dev-packages]
 
