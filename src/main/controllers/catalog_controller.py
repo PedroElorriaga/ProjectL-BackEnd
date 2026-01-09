@@ -1,4 +1,4 @@
-from src.models.mysql.repository.catalog_repository import CatalogRepository
+from src.databases.postgres.repository.catalog_repository import CatalogRepository
 from src.services.http_types.http_response import HttpResponse
 from sqlalchemy.exc import DataError
 
@@ -37,7 +37,7 @@ class CatalogController:
 
             return HttpResponse({'sucess': True, 'message': response}, 200)
         except Exception as exc:
-            if str(exc) == 'Não esse item no catalogo':
+            if str(exc) == 'O item não existe no catalogo':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
             if str(exc) == 'Não existe itens no catalogo':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
