@@ -1,8 +1,8 @@
-from flask import Flask, request
+import os
+from flask import Flask
 from src.main.routes.catalog import catalog_route
 from src.main.routes.login import login_route
-from src.models.mysql.settings.mysql_model import db
-import os
+from src.databases.postgres.settings.postgres_config import PostgresDbAlchemy
 from dotenv import load_dotenv
 from flask_cors import CORS
 
@@ -10,6 +10,8 @@ from flask_cors import CORS
 load_dotenv()
 BASE_DIR = os.path.abspath(os.path.join(
     os.path.dirname(__file__), '..', '..', '..'))
+
+db = PostgresDbAlchemy.db
 
 
 def create_app() -> Flask:
