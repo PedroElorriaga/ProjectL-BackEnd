@@ -24,7 +24,7 @@ jobs:
 
     - name: Exect pipenv enviroment
       run: |
-        pipenv install --dev
+        pipenv install --dev && pipenv install
 
     - name: Run Tests
       run: |
