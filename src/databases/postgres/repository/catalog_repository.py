@@ -25,12 +25,12 @@ class CatalogRepository:
         self.__mysql_connection.session.add(new_item)
         self.__mysql_connection.session.commit()
 
-    def get_all_itens(self) -> List[object] | None:
+    def get_all_itens(self) -> List[object] | List[None]:
         itens = self.__table_model.query.all()
         response = []
 
         if len(itens) == 0:
-            raise Exception('Não existe itens no catalogo')
+            return response
 
         for item in itens:
             response.append({
