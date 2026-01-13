@@ -21,6 +21,8 @@ validate-docbr = "*"
 email-validator = "*"
 
 [dev-packages]
+pytest = "*"
+requests = "*"
 
 [scripts]
 app = "python app.py"
