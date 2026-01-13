@@ -18,6 +18,7 @@ cloudinary = "*"
 pydantic = "*"
 psycopg = {extras = ["binary"], version = "*"}
 validate-docbr = "*"
+email-validator = "*"
 
 [dev-packages]
 
