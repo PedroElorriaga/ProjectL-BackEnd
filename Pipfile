@@ -20,6 +20,8 @@ psycopg = {extras = ["binary"], version = "*"}
 validate-docbr = "*"
 
 [dev-packages]
+pytest = "*"
+requests = "*"
 
 [scripts]
 app = "python app.py"
