@@ -28,4 +28,4 @@ jobs:
 
     - name: Run Tests
       run: |
-        pipenv run pytest -s test_api.py -v
+        pipenv run pytest -s tests/test_api.py -v
