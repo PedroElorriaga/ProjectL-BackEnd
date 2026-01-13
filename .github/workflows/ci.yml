@@ -9,6 +9,7 @@ on:
 jobs:
  build:
   runs-on: ubuntu-latest
+  environment: env
 
   steps:
     - name: Check Code
@@ -23,10 +24,13 @@ jobs:
       run: |
         pip install pipenv
 
-    - name: Exec pipenv enviroment
+    - name: Exect pipenv enviroment
       run: |
         pipenv install --dev
 
     - name: Run Tests
+      env:
+        SQLALCHEMY_DATABASE_URI: ${{ secrets.SQLALCHEMY_DATABASE_URI }}
+        SECRET_KEY: ${{ secrets.SECRET_KEY }}
       run: |
         pipenv run pytest -s tests/. -v
