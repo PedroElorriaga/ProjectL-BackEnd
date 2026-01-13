@@ -36,6 +36,12 @@ def non_admin_token():
     return token
 
 
+def test_get_root_return_302(client):
+    response = client.get('/')
+
+    assert response.status_code == 302
+
+
 def test_get_catalog_return_200_content_type_json_return_list(client):
     response = client.get('/catalogo/')
 
