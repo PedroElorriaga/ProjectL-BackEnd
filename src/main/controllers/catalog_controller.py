@@ -15,7 +15,7 @@ class CatalogController:
 
         try:
             self.__catalog_repository.add_item(data)
-            return HttpResponse({'sucess': True, 'message': 'Perfume incluido na base de dados!'}, 200)
+            return HttpResponse({'sucess': True, 'message': 'Perfume incluido na base de dados!'}, 201)
         except KeyError as exc:
             return HttpResponse({'sucess': False, 'message': f'Falta informações na sua inclusão -> {str(exc)} <-'}, 401)
         except DataError as exc:
