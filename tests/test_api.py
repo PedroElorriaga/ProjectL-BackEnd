@@ -45,6 +45,15 @@ def test_get_catalog_return_200_content_type_json_return_list(client):
     assert isinstance(data['message'], list)
 
 
+def test_get_catalog_return_204_content_type_json_return_list(client):
+    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.get_all_itens') as mock_repo:
+        mock_repo.return_value = []
+        response = client.get('/catalogo/')
+
+    assert response.status_code == 204
+    assert response.content_type == 'application/json'
+
+
 def test_post_catalog_add_perfume_with_valid_token_return_201_return_dict(client, admin_token):
     headers = {
         'Authorization': f'Bearer {admin_token}'

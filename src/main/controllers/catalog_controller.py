@@ -35,11 +35,12 @@ class CatalogController:
             else:
                 response = self.__catalog_repository.get_all_itens()
 
+            if len(response) == 0:
+                return HttpResponse({'sucess': True, 'message': response}, 204)
+
             return HttpResponse({'sucess': True, 'message': response}, 200)
         except Exception as exc:
             if str(exc) == 'O item não existe no catalogo':
-                return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
-            if str(exc) == 'Não existe itens no catalogo':
                 return HttpResponse({'sucess': False, 'message': f'Ops -> {str(exc)} <-'}, 404)
             return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
 
