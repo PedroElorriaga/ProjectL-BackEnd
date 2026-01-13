@@ -20,11 +20,11 @@ jobs:
 
     - name: Install pipenv
       run: |
-        pip install pipenv --dev
+        pip install pipenv
 
     - name: Exect pipenv enviroment
       run: |
-        pipenv install
+        pipenv install --dev
 
     - name: Run Tests
       run: |
