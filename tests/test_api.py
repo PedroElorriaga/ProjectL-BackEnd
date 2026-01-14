@@ -3,7 +3,7 @@ import os
 import jwt
 from app import create_app
 from dotenv import load_dotenv
-from unittest.mock import patch
+from unittest.mock import patch, MagicMock
 from src.services.http_types.http_response import HttpResponse
 
 load_dotenv()
@@ -34,6 +34,16 @@ def non_admin_token():
     token = jwt.encode({'public_id': 377, 'user_role': 'customer'},
                        os.getenv('SECRET_KEY'), algorithm='HS256')
     return token
+
+
+@pytest.fixture
+def user():
+    mock_user = MagicMock()
+    mock_user.id = 1
+    mock_user.user = 'mock'
+    mock_user.email = 'MOCKADO@email.com'
+    mock_user.password = 'mock123@'
+    return mock_user
 
 
 def test_get_root_return_302(client):
@@ -102,3 +112,79 @@ def test_post_catalog_add_perfume_with_invalid_token_return_401_return_dict(clie
     assert response.status_code == 401
     assert response.get_json() == {
         'sucess': False, 'message': f'Você não tem permissão para executar isso'}
+
+
+def test_post_login_add_new_user_with_valid_credentials_return_201_content_type_json(client):
+    payload = {
+        'email': 'MOCKADO@email.com',
+        'password': 'mock123@',
+        'user': 'customer',
+        'nome': 'John Doe',
+        'cpf': '57230621070'
+    }
+
+    with patch('src.databases.postgres.repository.user_repository.UserRepository.add_item') as mock_repo:
+        mock_repo.return_value = HttpResponse(
+            {'sucess': True, 'message': 'Login criado com sucesso!'}, 201)
+        response = client.post('/login/create', json=payload)
+
+    assert response.status_code == 201
+    assert response.content_type == 'application/json'
+
+
+def test_post_login_add_new_user_with_invalid_credentials_return_400_content_type_json(client):
+    payload = {
+        'email': 'MOCKADO',
+        'password': 'mock123@',
+        'user': 'customer',
+        'nome': 'John Doe',
+        'cpf': '57230621070'
+    }
+    response = client.post('/login/create', json=payload)
+
+    assert response.status_code == 400
+    assert response.content_type == 'application/json'
+
+
+def test_post_login_make_login_return_200_return_dict(client, user):
+    payload = {
+        'email': 'MOCKADO@email.com',
+        'password': 'mock123@'
+    }
+
+    with patch('src.databases.postgres.repository.user_repository.UserRepository.get_item') as mock_repo, \
+            patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
+            patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
+
+        mock_repo.return_value = user
+
+        mock_bcrypt.return_value = True
+        mock_jwt.return_value = 'MOCKjwt'
+
+        response = client.post('/login/', json=payload)
+
+        assert response.status_code == 200
+        assert response.get_json() == {
+            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': 'MOCKjwt'}
+
+
+def test_post_login_make_login_using_id_return_200_return_dict(client, user):
+    payload = {
+        'password': 'mock123@'
+    }
+
+    with patch('src.databases.postgres.repository.user_repository.UserRepository.get_item') as mock_repo, \
+            patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
+            patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
+
+        mock_repo.return_value = user
+
+        mock_bcrypt.return_value = True
+        mock_jwt.return_value = 'MOCKjwt'
+
+        response = client.post(
+            f'/login/{mock_repo.return_value.id}', json=payload)
+
+        assert response.status_code == 200
+        assert response.get_json() == {
+            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': 'MOCKjwt'}

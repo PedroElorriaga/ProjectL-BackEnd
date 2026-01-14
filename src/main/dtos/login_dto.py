@@ -8,7 +8,7 @@ class LoginResponseDTO(BaseModel):
 
 
 class LoginRequestDTO(BaseModel):
-    email: EmailStr
+    email: EmailStr = None
     password: str
 
 
