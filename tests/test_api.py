@@ -46,6 +46,20 @@ def user():
     return mock_user
 
 
+@pytest.fixture
+def product():
+    mock_product = MagicMock()
+    mock_product.id = 1
+    mock_product.perfume = 'TESTER'
+    mock_product.ml = 100
+    mock_product.preco = 299.99
+    mock_product.tipo = 'EDP'
+    mock_product.tags = ['MOCK', 'ADO']
+    mock_product.imagem_url = 'url:cloudinary'
+
+    return mock_product
+
+
 def test_get_root_return_302(client):
     response = client.get('/')
 
@@ -112,6 +126,38 @@ def test_post_catalog_add_perfume_with_invalid_token_return_401_return_dict(clie
     assert response.status_code == 401
     assert response.get_json() == {
         'sucess': False, 'message': f'Você não tem permissão para executar isso'}
+
+
+def test_post_delete_perfume_with_valid_token_return_200_return_dict(client, product, admin_token):
+    headers = {
+        'Authorization': f'Bearer {admin_token}'
+    }
+
+    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
+        mock_repo.return_value = HttpResponse(
+            {'sucess': True, 'message': 'Item deletado com sucesso!'}, 200)
+        response = client.post(
+            f'/catalogo/deletar-perfume/{product.id}', headers=headers)
+
+    assert response.status_code == 200
+    assert response.get_json() == {'sucess': True,
+                                   'message': 'Item deletado com sucesso!'}
+
+
+def test_post_delete_perfume_with_invalid_token_return_401_return_dict(client, product, non_admin_token):
+    headers = {
+        'Authorization': f'Bearer {non_admin_token}'
+    }
+
+    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
+        mock_repo.return_value = HttpResponse(
+            {'sucess': True, 'message': 'Item deletado com sucesso!'}, 200)
+        response = client.post(
+            f'/catalogo/deletar-perfume/{product.id}', headers=headers)
+
+    assert response.status_code == 401
+    assert response.get_json() == {'sucess': False,
+                                   'message': 'Você não tem permissão para executar isso'}
 
 
 def test_post_login_add_new_user_with_valid_credentials_return_201_content_type_json(client):
