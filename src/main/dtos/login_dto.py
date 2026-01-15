@@ -4,7 +4,7 @@ from pydantic import BaseModel, EmailStr
 class LoginResponseDTO(BaseModel):
     message: str
     sucess: bool
-    access_token: str
+    access_token: str = None
 
 
 class LoginRequestDTO(BaseModel):

@@ -80,7 +80,7 @@ def test_post_catalog_add_perfume_with_valid_token_return_201_return_dict(client
         'ml': 999,
         'tipo': 'EDP',
         'preco': '999.99',
-        'tags': ['PY', 'TEST']
+        'tags': 'mock_1, mock_2'
     }
 
     # NAO ESQUECER FUTURAMENTE PEDRONAUTA, AQUI O PATCH NAO DEIXA EXECUTAR O CODIGO ORIGINAL, EXECUTAMOS O MOCK_REPO
@@ -104,7 +104,7 @@ def test_post_catalog_add_perfume_with_invalid_token_return_401_return_dict(clie
         'ml': 999,
         'tipo': 'EDP',
         'preco': '999.99',
-        'tags': ['PY', 'TEST']
+        'tags': 'mock_1, mock_2'
     }
 
     response = client.post('/catalogo/', data=payload, headers=headers)

@@ -13,7 +13,7 @@ def add_login() -> jsonify:
 
     response = login_repo.add_new_login(http_request.body)
 
-    return jsonify(response.body), response.status
+    return jsonify(response.body.model_dump()), response.status
 
 
 @login_route.route('/', defaults={'id_credential': None}, methods=['POST'])
