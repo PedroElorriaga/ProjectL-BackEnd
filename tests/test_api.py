@@ -43,6 +43,7 @@ def user():
     mock_user.user = 'mock'
     mock_user.email = 'MOCKADO@email.com'
     mock_user.password = 'mock123@'
+
     return mock_user
 
 
