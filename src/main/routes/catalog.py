@@ -57,7 +57,7 @@ def add_perfume(user_token_information: tuple) -> jsonify:
     return jsonify(response.body.model_dump()), response.status
 
 
-@catalog_route.route('/deletar-perfume/<int:id_perfume>', methods=['POST'])
+@catalog_route.route('/deletar-perfume/<int:id_perfume>', methods=['DELETE'])
 @token_required
 def delete_perfume(user_token_information: tuple, id_perfume: int) -> jsonify:
     catalog_repo = catalog_composer()
@@ -67,7 +67,7 @@ def delete_perfume(user_token_information: tuple, id_perfume: int) -> jsonify:
     return jsonify(response.body.model_dump()), response.status
 
 
-@catalog_route.route('/atualizar-perfume/<int:id_perfume>', methods=['POST'])
+@catalog_route.route('/atualizar-perfume/<int:id_perfume>', methods=['PUT'])
 @token_required
 def update_perfume(user_token_information: tuple, id_perfume: int) -> jsonify:
     http_request = HttpRequest(request.json)
