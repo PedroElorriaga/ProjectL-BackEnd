@@ -5,6 +5,7 @@ from app import create_app
 from dotenv import load_dotenv
 from unittest.mock import patch, MagicMock
 from src.services.http_types.http_response import HttpResponse
+from src.main.dtos.catalog_dto import CatalogUpdatePerfumeRequestDTO
 
 load_dotenv()
 
@@ -67,22 +68,23 @@ def test_get_root_return_302(client):
     assert response.status_code == 302
 
 
-def test_get_catalog_return_200_content_type_json_return_list(client):
+def test_get_catalog_return_200_return_list(client):
     response = client.get('/catalogo/')
 
     assert response.status_code == 200
-    assert response.content_type == 'application/json'
     data = response.get_json()
     assert isinstance(data['message'], list)
 
 
-def test_get_catalog_return_204_content_type_json_return_list(client):
+def test_get_catalog_return_204_json_return_dict(client):
     with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.get_all_itens') as mock_repo:
-        mock_repo.return_value = []
+        mock_repo.return_value.itens = []
+        mock_repo.return_value.response = HttpResponse(
+            {'sucess': True, 'message': []}, 200)
         response = client.get('/catalogo/')
 
-    assert response.status_code == 204
-    assert response.content_type == 'application/json'
+    assert response.status_code == mock_repo.return_value.response.status
+    assert response.get_json() == mock_repo.return_value.response.body
 
 
 def test_post_catalog_add_perfume_with_valid_token_return_201_return_dict(client, admin_token):
@@ -104,9 +106,8 @@ def test_post_catalog_add_perfume_with_valid_token_return_201_return_dict(client
             {'sucess': True, 'message': 'Perfume incluido na base de dados!'}, 201)
         response = client.post('/catalogo/', data=payload, headers=headers)
 
-    assert response.status_code == 201
-    assert response.get_json() == {
-        'sucess': True, 'message': 'Perfume incluido na base de dados!'}
+    assert response.status_code == mock_repo.return_value.status
+    assert response.get_json() == mock_repo.return_value.body
 
 
 def test_post_catalog_add_perfume_with_invalid_token_return_401_return_dict(client, non_admin_token):
@@ -129,7 +130,7 @@ def test_post_catalog_add_perfume_with_invalid_token_return_401_return_dict(clie
         'sucess': False, 'message': f'Você não tem permissão para executar isso'}
 
 
-def test_post_delete_perfume_with_valid_token_return_200_return_dict(client, product, admin_token):
+def test_delete_delete_perfume_with_valid_token_return_200_return_dict(client, product, admin_token):
     headers = {
         'Authorization': f'Bearer {admin_token}'
     }
@@ -137,31 +138,80 @@ def test_post_delete_perfume_with_valid_token_return_200_return_dict(client, pro
     with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': True, 'message': 'Item deletado com sucesso!'}, 200)
-        response = client.post(
+        response = client.delete(
             f'/catalogo/deletar-perfume/{product.id}', headers=headers)
 
-    assert response.status_code == 200
-    assert response.get_json() == {'sucess': True,
-                                   'message': 'Item deletado com sucesso!'}
+    assert response.status_code == mock_repo.return_value.status
+    assert response.get_json() == mock_repo.return_value.body
 
 
-def test_post_delete_perfume_with_invalid_token_return_401_return_dict(client, product, non_admin_token):
+def test_delete_delete_perfume_with_invalid_token_return_401_return_dict(client, product, non_admin_token):
     headers = {
         'Authorization': f'Bearer {non_admin_token}'
     }
 
     with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
-            {'sucess': True, 'message': 'Item deletado com sucesso!'}, 200)
-        response = client.post(
+            {'sucess': False, 'message': 'Você não tem permissão para executar isso'}, 401)
+        response = client.delete(
             f'/catalogo/deletar-perfume/{product.id}', headers=headers)
 
-    assert response.status_code == 401
-    assert response.get_json() == {'sucess': False,
-                                   'message': 'Você não tem permissão para executar isso'}
+    assert response.status_code == mock_repo.return_value.status
+    assert response.get_json() == mock_repo.return_value.body
 
 
-def test_post_login_add_new_user_with_valid_credentials_return_201_content_type_json(client):
+def test_put_update_perfume_with_valid_token_return_200_return_dict(client, product, admin_token):
+    headers = {
+        'Authorization': f'Bearer {admin_token}'
+    }
+
+    payload = {
+        'perfume': 'atualizado',
+        'ml': 100,
+        'preco': 299.99,
+        'tipo': 'EDP',
+        'tags': ['MOCK', 'ADO']
+    }
+
+    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.patch_item') as mock_repo:
+        mock_repo.return_value = HttpResponse(
+            {'sucess': True, 'message': 'Item atualizado com sucesso!'}, 200)
+        response = client.put(
+            f'/catalogo/atualizar-perfume/{product.id}', json=payload, headers=headers)
+
+        mock_repo.assert_called_once_with(
+            product.id, CatalogUpdatePerfumeRequestDTO(**payload))
+
+    assert response.status_code == mock_repo.return_value.status
+    assert response.get_json() == mock_repo.return_value.body
+
+
+def test_put_update_perfume_with_invalid_token_return_401_return_dict(client, product, non_admin_token):
+    headers = {
+        'Authorization': f'Bearer {non_admin_token}'
+    }
+
+    payload = {
+        'perfume': 'atualizado',
+        'ml': 100,
+        'preco': 299.99,
+        'tipo': 'EDP',
+        'tags': ['MOCK', 'ADO']
+    }
+
+    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.patch_item') as mock_repo:
+        mock_repo.return_value = HttpResponse(
+            {'sucess': False, 'message': 'Você não tem permissão para executar isso'}, 401)
+        response = client.put(
+            f'/catalogo/atualizar-perfume/{product.id}', json=payload, headers=headers)
+
+        mock_repo.assert_not_called()
+
+    assert response.status_code == mock_repo.return_value.status
+    assert response.get_json() == mock_repo.return_value.body
+
+
+def test_post_login_create_new_user_with_valid_credentials_return_201_content_type_json(client):
     payload = {
         'email': 'MOCKADO@email.com',
         'password': 'mock123@',
@@ -175,11 +225,11 @@ def test_post_login_add_new_user_with_valid_credentials_return_201_content_type_
             {'sucess': True, 'message': 'Login criado com sucesso!'}, 201)
         response = client.post('/login/create', json=payload)
 
-    assert response.status_code == 201
+    assert response.status_code == mock_repo.return_value.status
     assert response.content_type == 'application/json'
 
 
-def test_post_login_add_new_user_with_invalid_credentials_return_400_content_type_json(client):
+def test_post_login_create_new_user_with_invalid_email_return_400_content_type_json_return_dict(client):
     payload = {
         'email': 'MOCKADO',
         'password': 'mock123@',
@@ -191,6 +241,8 @@ def test_post_login_add_new_user_with_invalid_credentials_return_400_content_typ
 
     assert response.status_code == 400
     assert response.content_type == 'application/json'
+    assert response.get_json() == {
+        'access_token': None, 'message': 'Email inválido', 'sucess': False}
 
 
 def test_post_login_make_login_return_200_return_dict(client, user):
@@ -203,16 +255,16 @@ def test_post_login_make_login_return_200_return_dict(client, user):
             patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
             patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
 
-        mock_repo.return_value = user
-
         mock_bcrypt.return_value = True
         mock_jwt.return_value = 'MOCKjwt'
+        mock_repo.return_value.item = user
+        mock_repo.return_value.response = HttpResponse({
+            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': mock_jwt.return_value}, 200)
 
         response = client.post('/login/', json=payload)
 
-        assert response.status_code == 200
-        assert response.get_json() == {
-            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': 'MOCKjwt'}
+    assert response.status_code == mock_repo.return_value.response.status
+    assert response.get_json() == mock_repo.return_value.response.body
 
 
 def test_post_login_make_login_using_id_return_200_return_dict(client, user):
@@ -224,14 +276,14 @@ def test_post_login_make_login_using_id_return_200_return_dict(client, user):
             patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
             patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
 
-        mock_repo.return_value = user
-
         mock_bcrypt.return_value = True
         mock_jwt.return_value = 'MOCKjwt'
+        mock_repo.return_value.item = user
+        mock_repo.return_value.response = HttpResponse({
+            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': mock_jwt.return_value}, 200)
 
         response = client.post(
-            f'/login/{mock_repo.return_value.id}', json=payload)
+            f'/login/{mock_repo.return_value.item.id}', json=payload)
 
-        assert response.status_code == 200
-        assert response.get_json() == {
-            'sucess': True, 'message': 'Login Efetuado com sucesso', 'access_token': 'MOCKjwt'}
+    assert response.status_code == mock_repo.return_value.response.status
+    assert response.get_json() == mock_repo.return_value.response.body

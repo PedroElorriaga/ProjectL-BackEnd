@@ -1,6 +1,6 @@
 from src.databases.postgres.repository.catalog_repository import CatalogRepository
 from src.services.http_types.http_response import HttpResponse
-from src.main.dtos.catalog_dto import CatalogNewPerfumeRequestDTO, CatalogResponseDTO
+from src.main.dtos.catalog_dto import CatalogNewPerfumeRequestDTO, CatalogResponseDTO, CatalogUpdatePerfumeRequestDTO
 from sqlalchemy.exc import DataError
 
 
@@ -41,16 +41,16 @@ class CatalogController:
     def get_perfume(self, id: int | None = None) -> HttpResponse:
         try:
             if id:
-                response = self.__catalog_repository.get_item(id)
+                itens = self.__catalog_repository.get_item(id)
             else:
-                response = self.__catalog_repository.get_all_itens()
+                itens = self.__catalog_repository.get_all_itens()
 
-            if len(response) == 0:
+            if len(itens) == 0:
                 return HttpResponse(CatalogResponseDTO(
-                    sucess=True, message=response), 204)
+                    sucess=True, message=itens), 200)
 
             return HttpResponse(CatalogResponseDTO(
-                sucess=True, message=response), 200)
+                sucess=True, message=itens), 200)
         except Exception as exc:
             if str(exc) == 'O item não existe no catalogo':
                 return HttpResponse(CatalogResponseDTO(
@@ -81,12 +81,14 @@ class CatalogController:
     def patch_perfume(self, id_perfume: int, data: dict, user_token_information: tuple) -> HttpResponse:
         (id, role) = user_token_information
 
+        input_data = CatalogUpdatePerfumeRequestDTO(**data)
+
         if role != 'admin':
             return HttpResponse(CatalogResponseDTO(
                 sucess=False, message='Você não tem permissão para executar isso'), 401)
 
         try:
-            self.__catalog_repository.patch_item(id_perfume, data)
+            self.__catalog_repository.patch_item(id_perfume, input_data)
 
             return HttpResponse(CatalogResponseDTO(
                 sucess=True, message='Item atualizado com sucesso!'), 200)
@@ -99,7 +101,7 @@ class CatalogController:
                 sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)
 
     def get_filtered_perfumes(self, data: dict) -> HttpResponse:
-        response = self.__catalog_repository.get_all_itens_filtered(data)
+        itens = self.__catalog_repository.get_all_itens_filtered(data)
 
         return HttpResponse(CatalogResponseDTO(
-            sucess=True, message=response), 200)
+            sucess=True, message=itens), 200)

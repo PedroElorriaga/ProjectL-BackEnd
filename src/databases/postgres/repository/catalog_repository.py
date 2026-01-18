@@ -27,13 +27,13 @@ class CatalogRepository:
 
     def get_all_itens(self) -> List[object] | List[None]:
         itens = self.__table_model.query.all()
-        response = []
+        list_itens = []
 
         if len(itens) == 0:
-            return response
+            return list_itens
 
         for item in itens:
-            response.append({
+            list_itens.append({
                 'id': item.id,
                 'perfume': item.perfume,
                 'ml': item.ml,
@@ -43,7 +43,7 @@ class CatalogRepository:
                 'imagem_url': item.imagem_url
             })
 
-        return response
+        return list_itens
 
     def get_item(self, id: int) -> dict | None:
         item = self.__table_model.query.get(id)
@@ -51,7 +51,7 @@ class CatalogRepository:
         if not item:
             raise Exception('O item não existe no catalogo')
 
-        response = {
+        dict_item = {
             'id': item.id,
             'perfume': item.perfume,
             'ml': item.ml,
@@ -61,7 +61,7 @@ class CatalogRepository:
             'imagem_url': item.imagem_url
         }
 
-        return response
+        return dict_item
 
     def delete_item(self, id: int) -> None:
         item = self.__table_model.query.get(id)
@@ -104,9 +104,9 @@ class CatalogRepository:
                     column.contains(data[field])).all()
                 break
 
-        response = []
+        list_itens = []
         for item in itens:
-            response.append({
+            list_itens.append({
                 'id': item.id,
                 'perfume': item.perfume,
                 'ml': item.ml,
@@ -116,4 +116,4 @@ class CatalogRepository:
                 'imagem_url': item.imagem_url
             })
 
-        return response
+        return list_itens

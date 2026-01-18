@@ -12,6 +12,7 @@ class CatalogNewPerfumeRequestDTO(BaseModel):
 
 
 class CatalogGetPerfumeResponseDTO(BaseModel):
+    id: int
     perfume: str
     ml: int
     preco: float
@@ -23,3 +24,11 @@ class CatalogGetPerfumeResponseDTO(BaseModel):
 class CatalogResponseDTO(BaseModel):
     sucess: bool
     message: str | List[CatalogGetPerfumeResponseDTO] | List[None]
+
+
+class CatalogUpdatePerfumeRequestDTO(BaseModel):
+    perfume: str = None
+    ml: int = None
+    preco: float = None
+    tipo: str = None
+    tags: List[str] = None
