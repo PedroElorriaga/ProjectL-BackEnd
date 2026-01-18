@@ -18,24 +18,30 @@ class LoginController:
             cpf = CPF()
 
             if not cpf.validate(input_data.cpf):
-                return HttpResponse({'sucess': False, 'message': f'Cpf inválido'}, 401)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Cpf inválido'), 401)
 
             password_hashed = BcryptHandle.hash_content(input_data.password)
             input_data.password = password_hashed
 
             self.__login_repository.add_item(input_data.model_dump())
 
-            return HttpResponse({'sucess': True, 'message': 'Login criado com sucesso!'}, 201)
+            return HttpResponse(LoginResponseDTO(
+                sucess=True, message='Login criado com sucesso!'), 201)
         except IntegrityError as exc:
             if data.get('email') in str(exc).split('")')[0]:
-                return HttpResponse({'sucess': False, 'message': f'O email já esta sendo utilizado'}, 401)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='O email já esta sendo utilizado'), 401)
             elif data.get('cpf') in str(exc).split('")')[0]:
-                return HttpResponse({'sucess': False, 'message': f'O cpf já esta sendo utilizado'}, 401)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='O cpf já esta sendo utilizado'), 401)
         except Exception as exc:
             if 'validation error for NewLoginRequestDTO' in str(exc):
-                return HttpResponse({'sucess': False, 'message': f'Email inválido'}, 400)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Email inválido'), 400)
             print(exc)
-            return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
+            return HttpResponse(LoginResponseDTO(
+                sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)
 
     def get_login_credentials(self, data: dict, id: int | None = None) -> HttpResponse:
         try:
@@ -45,8 +51,8 @@ class LoginController:
                 input_data.email, id)
 
             if not BcryptHandle.check_content(input_data.password, login_credential.password):
-                return HttpResponse(
-                    {'sucess': False, 'message': 'Email ou senha incorretos'}, 401)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Email ou senha incorretos'), 401)
 
             access_token = JwtHandle.gen_token(
                 login_credential.id, login_credential.user)
@@ -55,9 +61,11 @@ class LoginController:
                 sucess=True, message='Login Efetuado com sucesso', access_token=access_token), 200)
         except Exception as exc:
             if str(exc) == 'Nenhum item foi encontrado com esse ID':
-                return HttpResponse({'sucess': False, 'message': 'Parece que esse ID não existe'}, 404)
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Parece que esse ID não existe'), 404)
             elif str(exc) == 'Nenhum item foi encontrado com esse EMAIL':
-                return HttpResponse({'sucess': False, 'message': 'Parece que esse EMAIL não existe'}, 404)
-
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Parece que esse EMAIL não existe'), 404)
             print(exc)
-            return HttpResponse({'sucess': False, 'message': f'Ops :( Algum erro inesperedo ocorreu'}, 500)
+            return HttpResponse(LoginResponseDTO(
+                sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)
