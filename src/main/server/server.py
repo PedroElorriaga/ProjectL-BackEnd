@@ -3,6 +3,7 @@ from flask import Flask, redirect, url_for
 from src.main.routes.catalog import catalog_route
 from src.main.routes.login import login_route
 from src.main.routes.root import root_route
+from src.main.routes.supplier import supplier_route
 from src.databases.postgres.settings.postgres_config import PostgresDbAlchemy
 from dotenv import load_dotenv
 from flask_cors import CORS
@@ -33,6 +34,7 @@ def create_app() -> Flask:
     app.register_blueprint(root_route, url_prefix='/')
     app.register_blueprint(catalog_route, url_prefix='/catalogo')
     app.register_blueprint(login_route, url_prefix='/login')
+    app.register_blueprint(supplier_route, url_prefix='/fornecedor')
 
     CORS(app, resources={r"/*": {"origins": "*"}}, supports_credentials=True)
 

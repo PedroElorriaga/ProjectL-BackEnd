@@ -29,9 +29,6 @@ class CatalogRepository:
         itens = self.__table_model.query.all()
         list_itens = []
 
-        if len(itens) == 0:
-            return list_itens
-
         for item in itens:
             list_itens.append({
                 'id': item.id,
@@ -74,13 +71,18 @@ class CatalogRepository:
 
     def patch_item(self, id: int, data: dict) -> None:
         item = self.__table_model.query.get(id)
+        data_dump = data.model_dump()
+
+        item_exists = self.search_filtered_item(data_dump)
+        if item_exists:
+            raise Exception('O item ja existe!')
 
         if not item:
             raise Exception('Id não existe')
 
         for field in ['perfume', 'ml', 'preco', 'tipo', 'tags', 'imagem_url']:
-            if field in data:
-                setattr(item, field, data[field])
+            if field in data_dump:
+                setattr(item, field, data_dump[field])
 
         self.__mysql_connection.session.commit()
 
