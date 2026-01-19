@@ -29,9 +29,6 @@ class CatalogRepository:
         itens = self.__table_model.query.all()
         list_itens = []
 
-        if len(itens) == 0:
-            return list_itens
-
         for item in itens:
             list_itens.append({
                 'id': item.id,
