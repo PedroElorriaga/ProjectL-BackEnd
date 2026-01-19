@@ -31,4 +31,4 @@ class SupplierGetResponseDTO(BaseModel):
 
 class SupplierResponseDTO(BaseModel):
     sucess: bool
-    message: str | List[SupplierGetResponseDTO] | List[None]
+    message: str | dict | List[SupplierGetResponseDTO] | List[None]
