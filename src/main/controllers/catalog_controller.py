@@ -96,6 +96,9 @@ class CatalogController:
             if str(exc) == 'Id não existe':
                 return HttpResponse(CatalogResponseDTO(
                     sucess=False, message=f'Ops -> {str(exc)} <-'), 404)
+            if str(exc) == 'O item ja existe!':
+                return HttpResponse(CatalogResponseDTO(
+                    sucess=False, message=str(exc)), 401)
             print(exc)
             return HttpResponse(CatalogResponseDTO(
                 sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)
