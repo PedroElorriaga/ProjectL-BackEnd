@@ -1,1 +1,1 @@
-web: gunicorn --bind 0.0.0.0:$PORT app:app
+web: pipenv run alembic upgrade head && gunicorn --bind 0.0.0.0:$PORT app:app

@@ -25,12 +25,10 @@ class CatalogRepository:
         self.__mysql_connection.session.add(new_item)
         self.__mysql_connection.session.commit()
 
+    # TODO - AJUSTAR O TIPO OBJECT PARA dict, ABRIR PR PARA CONTROLE
     def get_all_itens(self) -> List[object] | List[None]:
         itens = self.__table_model.query.all()
         list_itens = []
-
-        if len(itens) == 0:
-            return list_itens
 
         for item in itens:
             list_itens.append({
@@ -45,6 +43,7 @@ class CatalogRepository:
 
         return list_itens
 
+    # TODO - NOME PODE MELHORAR get_item_by_id SUGESTÃO**, ABRIR PR PARA CONTROLE
     def get_item(self, id: int) -> dict | None:
         item = self.__table_model.query.get(id)
 
@@ -74,13 +73,19 @@ class CatalogRepository:
 
     def patch_item(self, id: int, data: dict) -> None:
         item = self.__table_model.query.get(id)
+        data_dump = data.model_dump()
+
+        item_exists = self.search_filtered_item(data_dump)
+        if item_exists:
+            raise Exception('O item ja existe!')
 
         if not item:
             raise Exception('Id não existe')
 
         for field in ['perfume', 'ml', 'preco', 'tipo', 'tags', 'imagem_url']:
-            if field in data:
-                setattr(item, field, data[field])
+            if field in data_dump:
+                if data_dump[field]:
+                    setattr(item, field, data_dump[field])
 
         self.__mysql_connection.session.commit()
 
@@ -95,6 +100,7 @@ class CatalogRepository:
 
         return item
 
+    # TODO - AJUSTAR O TIPO OBJECT PARA dict, ABRIR PR PARA CONTROLE
     def get_all_itens_filtered(self, data: dict) -> List[object] | None:
         for field in ['perfume', 'ml', 'preco', 'tipo', 'tags_string']:
             if field in data and data[field]:

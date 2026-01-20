@@ -23,7 +23,7 @@ class CatalogGetPerfumeResponseDTO(BaseModel):
 
 class CatalogResponseDTO(BaseModel):
     sucess: bool
-    message: str | List[CatalogGetPerfumeResponseDTO] | List[None]
+    message: str | dict | List[CatalogGetPerfumeResponseDTO] | List[None]
 
 
 class CatalogUpdatePerfumeRequestDTO(BaseModel):

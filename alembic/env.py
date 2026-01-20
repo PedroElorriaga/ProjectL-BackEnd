@@ -8,6 +8,7 @@ from alembic import context
 from src.databases.postgres.settings.postgres_config import PostgresDbAlchemy
 from src.databases.postgres.model.catalog import Catalog
 from src.databases.postgres.model.user import User
+from src.databases.postgres.model.supplier import Supplier
 
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
