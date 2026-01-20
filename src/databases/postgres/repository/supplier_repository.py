@@ -31,6 +31,9 @@ class SupplierRepository:
     def get_item_by_id(self, id_item: int) -> dict | None:
         item = self.__table_model.query.get(id_item)
 
+        if not item:
+            return None
+
         dict_item = {
             'id': item.id,
             'razao': item.razao,

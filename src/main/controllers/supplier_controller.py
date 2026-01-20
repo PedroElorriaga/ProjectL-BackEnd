@@ -30,3 +30,5 @@ class SuplierController:
             ), 200)
         except Exception as exc:
             print(exc)
+            return HttpResponse(SupplierResponseDTO(
+                sucess=False, message='Ocorreu algum erro inesperado'), 500)
