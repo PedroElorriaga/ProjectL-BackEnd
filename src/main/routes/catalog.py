@@ -11,11 +11,12 @@ catalog_route = Blueprint('catalogo', __name__)
 @catalog_route.route('/', defaults={'id_perfume': None}, methods=['GET'])
 @catalog_route.route('/<int:id_perfume>', methods=['GET'])
 def get_catalog(id_perfume: int | None = None) -> jsonify:
+    http_request = HttpRequest(params=request.args)
     catalog_repo = catalog_composer()
 
     if id_perfume:
         response = catalog_repo.get_perfume(id_perfume)
-    elif len(request.args) > 0:
+    elif len(http_request.params) > 0:
         response = catalog_repo.get_filtered_perfumes({
             'perfume': request.args.get('perfume'),
             'tipo': request.args.get('tipo'),
