@@ -84,7 +84,8 @@ class CatalogRepository:
 
         for field in ['perfume', 'ml', 'preco', 'tipo', 'tags', 'imagem_url']:
             if field in data_dump:
-                setattr(item, field, data_dump[field])
+                if data_dump[field]:
+                    setattr(item, field, data_dump[field])
 
         self.__mysql_connection.session.commit()
 
