@@ -1,2 +1,5 @@
 .env
 alembic.ini
+.vscode
+.pytest_cache
+__pycache__
