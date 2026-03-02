@@ -60,6 +60,18 @@ def upgrade() -> None:
                     sa.UniqueConstraint('cpf'),
                     sa.UniqueConstraint('email')
                     )
+
+    # Migrate data from old table to new table
+    # Note: numero_tel and cep are converted from INTEGER to String
+    op.execute("""
+        INSERT INTO tb_usuario (id, hash_senha, email, tipo_usuario, nome, sexo, cpf, numero_tel, cep, rua, numero_residencia, cidade, uf)
+        SELECT id, password, email, "user", nome, sexo, cpf, 
+               CAST(numero_tel AS VARCHAR(15)), 
+               CAST(cep AS VARCHAR(10)), 
+               rua, numero, cidade, uf
+        FROM "user"
+    """)
+
     op.drop_table('user')
     # ### end Alembic commands ###
 
@@ -100,5 +112,17 @@ def downgrade() -> None:
                     sa.UniqueConstraint('email', name=op.f('user_email_key'), postgresql_include=[
                     ], postgresql_nulls_not_distinct=False)
                     )
+
+    # Migrate data back from new table to old table
+    # Note: numero_tel and cep are converted back from String to INTEGER
+    op.execute("""
+        INSERT INTO "user" (id, password, email, "user", nome, sexo, cpf, numero_tel, cep, rua, numero, cidade, uf)
+        SELECT id, hash_senha, email, tipo_usuario, nome, sexo, cpf,
+               CAST(NULLIF(numero_tel, '') AS INTEGER),
+               CAST(NULLIF(cep, '') AS INTEGER),
+               rua, numero_residencia, cidade, uf
+        FROM tb_usuario
+    """)
+
     op.drop_table('tb_usuario')
     # ### end Alembic commands ###
