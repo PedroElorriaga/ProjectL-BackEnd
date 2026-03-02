@@ -2,7 +2,6 @@ from src.modules.users.repositories.user_repository import UserRepository
 from src.services.http_types.http_response import HttpResponse
 from sqlalchemy.exc import IntegrityError
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
-from src.services.security.jwt.jwt_handle import JwtHandle
 from src.modules.users.dtos.user_dto import UserResponseDTO, UserCreateRequestDTO
 from validate_docbr import CPF
 
@@ -39,7 +38,7 @@ class UserController:
                 return HttpResponse(UserResponseDTO(
                     sucess=False, message='O cpf já esta sendo utilizado'), 401)
         except Exception as exc:
-            if 'validation error for NewLoginRequestDTO' in str(exc):
+            if 'validation error for UserCreateRequestDTO' in str(exc):
                 return HttpResponse(UserResponseDTO(
                     sucess=False, message='Email inválido'), 400)
             print(exc)

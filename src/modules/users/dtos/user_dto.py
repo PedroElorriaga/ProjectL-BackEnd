@@ -4,7 +4,6 @@ from pydantic import BaseModel, EmailStr
 class UserResponseDTO(BaseModel):
     message: str
     sucess: bool
-    access_token: str = None
 
 
 class UserCreateRequestDTO(BaseModel):

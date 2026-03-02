@@ -214,16 +214,16 @@ def test_put_update_perfume_with_invalid_token_return_401_return_dict(client, pr
 def test_post_login_create_new_user_with_valid_credentials_return_201_content_type_json(client):
     payload = {
         'email': 'MOCKADO@email.com',
-        'password': 'mock123@',
-        'user': 'customer',
+        'senha': 'mock123@',
+        'tipo_usuario': 'customer',
         'nome': 'John Doe',
         'cpf': '57230621070'
     }
 
-    with patch('src.modules.users.repositories.user_repository.UserRepository.add_item') as mock_repo:
+    with patch('src.modules.users.repositories.user_repository.UserRepository.create_new_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
-            {'sucess': True, 'message': 'Login criado com sucesso!'}, 201)
-        response = client.post('/login/create', json=payload)
+            {'sucess': True, 'message': 'Usuário criado com sucesso!'}, 201)
+        response = client.post('/usuario/criar', json=payload)
 
     assert response.status_code == mock_repo.return_value.status
     assert response.content_type == 'application/json'
@@ -232,23 +232,23 @@ def test_post_login_create_new_user_with_valid_credentials_return_201_content_ty
 def test_post_login_create_new_user_with_invalid_email_return_400_content_type_json_return_dict(client):
     payload = {
         'email': 'MOCKADO',
-        'password': 'mock123@',
-        'user': 'customer',
+        'senha': 'mock123@',
+        'tipo_usuario': 'customer',
         'nome': 'John Doe',
         'cpf': '57230621070'
     }
-    response = client.post('/login/create', json=payload)
+    response = client.post('/usuario/criar', json=payload)
 
     assert response.status_code == 400
     assert response.content_type == 'application/json'
     assert response.get_json() == {
-        'access_token': None, 'message': 'Email inválido', 'sucess': False}
+        'message': 'Email inválido', 'sucess': False}
 
 
 def test_post_login_make_login_return_200_return_dict(client, user):
     payload = {
         'email': 'MOCKADO@email.com',
-        'password': 'mock123@'
+        'senha': 'mock123@'
     }
 
     with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \
@@ -269,7 +269,7 @@ def test_post_login_make_login_return_200_return_dict(client, user):
 
 def test_post_login_make_login_using_id_return_200_return_dict(client, user):
     payload = {
-        'password': 'mock123@'
+        'senha': 'mock123@'
     }
 
     with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \

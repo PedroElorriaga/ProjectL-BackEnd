@@ -1,6 +1,6 @@
 from src.modules.users.models.user import db, User
 from src.modules.users.repositories.user_repository import UserRepository
-from src.main.controllers.login_controller import LoginController
+from src.modules.login.controllers.login_controller import LoginController
 
 
 def login_composer() -> LoginController:
