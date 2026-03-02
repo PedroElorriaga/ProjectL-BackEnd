@@ -1,5 +1,5 @@
 from src.main.dtos.login_dto import LoginResponseDTO
-from src.main.dtos.catalog_dto import CatalogResponseDTO
+from src.modules.catalog.dtos.catalog_dto import CatalogResponseDTO
 from src.main.dtos.supplier_dto import SupplierResponseDTO
 
 
