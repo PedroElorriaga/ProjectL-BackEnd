@@ -1,5 +1,5 @@
-from src.databases.postgres.model.user import db, User
-from src.databases.postgres.repository.user_repository import UserRepository
+from src.modules.users.models.user import db, User
+from src.modules.users.repositories.user_repository import UserRepository
 from src.main.controllers.login_controller import LoginController
 
 

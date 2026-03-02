@@ -1,47 +1,13 @@
-from src.databases.postgres.repository.user_repository import UserRepository
+from src.modules.users.repositories.user_repository import UserRepository
 from src.services.http_types.http_response import HttpResponse
-from sqlalchemy.exc import IntegrityError
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
 from src.services.security.jwt.jwt_handle import JwtHandle
-from src.main.dtos.login_dto import LoginResponseDTO, LoginRequestDTO, NewLoginRequestDTO
-from validate_docbr import CPF
+from src.main.dtos.login_dto import LoginResponseDTO, LoginRequestDTO
 
 
 class LoginController:
     def __init__(self, login_repository: UserRepository):
         self.__login_repository = login_repository
-
-    def add_new_login(self, data: dict) -> HttpResponse:
-        try:
-            input_data = NewLoginRequestDTO(**data)
-            # TODO - VALIDAR SE TEM CARACTERES ESPECIAIS
-            cpf = CPF()
-
-            if not cpf.validate(input_data.cpf):
-                return HttpResponse(LoginResponseDTO(
-                    sucess=False, message='Cpf inválido'), 401)
-
-            password_hashed = BcryptHandle.hash_content(input_data.password)
-            input_data.password = password_hashed
-
-            self.__login_repository.add_item(input_data.model_dump())
-
-            return HttpResponse(LoginResponseDTO(
-                sucess=True, message='Login criado com sucesso!'), 201)
-        except IntegrityError as exc:
-            if data.get('email') in str(exc).split('")')[0]:
-                return HttpResponse(LoginResponseDTO(
-                    sucess=False, message='O email já esta sendo utilizado'), 401)
-            elif data.get('cpf') in str(exc).split('")')[0]:
-                return HttpResponse(LoginResponseDTO(
-                    sucess=False, message='O cpf já esta sendo utilizado'), 401)
-        except Exception as exc:
-            if 'validation error for NewLoginRequestDTO' in str(exc):
-                return HttpResponse(LoginResponseDTO(
-                    sucess=False, message='Email inválido'), 400)
-            print(exc)
-            return HttpResponse(LoginResponseDTO(
-                sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)
 
     def get_login_credentials(self, data: dict, id: int | None = None) -> HttpResponse:
         try:
