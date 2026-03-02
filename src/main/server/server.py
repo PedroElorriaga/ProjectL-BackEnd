@@ -1,9 +1,9 @@
 import os
-from flask import Flask, redirect, url_for
+from flask import Flask
 from src.modules.catalog.routes.catalog import catalog_route
 from src.modules.login.routes.login import login_route
 from src.main.routes.root import root_route
-from src.main.routes.supplier import supplier_route
+from src.modules.suppliers.routes.supplier import supplier_route
 from src.modules.users.routes.user import user_route
 from src.databases.postgres.settings.postgres_config import PostgresDbAlchemy
 from dotenv import load_dotenv
