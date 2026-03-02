@@ -1,6 +1,6 @@
 from src.modules.login.dtos.login_dto import LoginResponseDTO
 from src.modules.catalog.dtos.catalog_dto import CatalogResponseDTO
-from src.main.dtos.supplier_dto import SupplierResponseDTO
+from src.modules.suppliers.dtos.supplier_dto import SupplierResponseDTO
 
 
 class HttpResponse:
