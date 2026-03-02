@@ -5,7 +5,7 @@ from app import create_app
 from dotenv import load_dotenv
 from unittest.mock import patch, MagicMock
 from src.services.http_types.http_response import HttpResponse
-from src.main.dtos.catalog_dto import CatalogUpdatePerfumeRequestDTO
+from src.modules.catalog.dtos.catalog_dto import CatalogUpdatePerfumeRequestDTO
 
 load_dotenv()
 
@@ -77,7 +77,7 @@ def test_get_catalog_return_200_return_list(client):
 
 
 def test_get_catalog_return_204_json_return_dict(client):
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.get_all_itens') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.get_all_itens') as mock_repo:
         mock_repo.return_value.itens = []
         mock_repo.return_value.response = HttpResponse(
             {'sucess': True, 'message': []}, 200)
@@ -101,7 +101,7 @@ def test_post_catalog_add_perfume_with_valid_token_return_201_return_dict(client
     }
 
     # NAO ESQUECER FUTURAMENTE PEDRONAUTA, AQUI O PATCH NAO DEIXA EXECUTAR O CODIGO ORIGINAL, EXECUTAMOS O MOCK_REPO
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.add_item') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.add_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': True, 'message': 'Perfume incluido na base de dados!'}, 201)
         response = client.post('/catalogo/', data=payload, headers=headers)
@@ -135,7 +135,7 @@ def test_delete_delete_perfume_with_valid_token_return_200_return_dict(client, p
         'Authorization': f'Bearer {admin_token}'
     }
 
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.delete_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': True, 'message': 'Item deletado com sucesso!'}, 200)
         response = client.delete(
@@ -150,7 +150,7 @@ def test_delete_delete_perfume_with_invalid_token_return_401_return_dict(client,
         'Authorization': f'Bearer {non_admin_token}'
     }
 
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.delete_item') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.delete_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': False, 'message': 'Você não tem permissão para executar isso'}, 401)
         response = client.delete(
@@ -173,7 +173,7 @@ def test_put_update_perfume_with_valid_token_return_200_return_dict(client, prod
         'tags': ['MOCK', 'ADO']
     }
 
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.patch_item') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.patch_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': True, 'message': 'Item atualizado com sucesso!'}, 200)
         response = client.put(
@@ -199,7 +199,7 @@ def test_put_update_perfume_with_invalid_token_return_401_return_dict(client, pr
         'tags': ['MOCK', 'ADO']
     }
 
-    with patch('src.databases.postgres.repository.catalog_repository.CatalogRepository.patch_item') as mock_repo:
+    with patch('src.modules.catalog.repositories.catalog_repository.CatalogRepository.patch_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': False, 'message': 'Você não tem permissão para executar isso'}, 401)
         response = client.put(
@@ -220,7 +220,7 @@ def test_post_login_create_new_user_with_valid_credentials_return_201_content_ty
         'cpf': '57230621070'
     }
 
-    with patch('src.databases.postgres.repository.user_repository.UserRepository.add_item') as mock_repo:
+    with patch('src.modules.users.repositories.user_repository.UserRepository.add_item') as mock_repo:
         mock_repo.return_value = HttpResponse(
             {'sucess': True, 'message': 'Login criado com sucesso!'}, 201)
         response = client.post('/login/create', json=payload)
@@ -251,7 +251,7 @@ def test_post_login_make_login_return_200_return_dict(client, user):
         'password': 'mock123@'
     }
 
-    with patch('src.databases.postgres.repository.user_repository.UserRepository.get_item') as mock_repo, \
+    with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \
             patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
             patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
 
@@ -272,7 +272,7 @@ def test_post_login_make_login_using_id_return_200_return_dict(client, user):
         'password': 'mock123@'
     }
 
-    with patch('src.databases.postgres.repository.user_repository.UserRepository.get_item') as mock_repo, \
+    with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \
             patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
             patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
 
