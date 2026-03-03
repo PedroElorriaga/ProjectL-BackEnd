@@ -15,6 +15,8 @@ This documentation covers the main modules of the ProjectL API.
 
 See [DEV_DATABASE.md](DEV_DATABASE.md) for database setup instructions.
 
+For information about the baseline migration used in CI testing, see [BASELINE_MIGRATION.md](BASELINE_MIGRATION.md).
+
 ## API Overview
 
 ### Public Endpoints
