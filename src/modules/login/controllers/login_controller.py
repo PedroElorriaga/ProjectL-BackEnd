@@ -1,5 +1,5 @@
 from src.modules.users.repositories.user_repository import UserRepository
-from src.services.http_types.http_response import HttpResponse
+from src.shared.http_types.http_response import HttpResponse
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
 from src.services.security.jwt.jwt_handle import JwtHandle
 from src.modules.login.dtos.login_dto import LoginResponseDTO, LoginRequestDTO

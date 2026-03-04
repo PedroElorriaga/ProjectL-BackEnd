@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.services.http_types.http_requests import HttpRequest
+from src.shared.http_types.http_requests import HttpRequest
 from src.modules.users.composers.user_composer import user_composer
 
 

@@ -1,5 +1,5 @@
 from src.modules.users.repositories.user_repository import UserRepository
-from src.services.http_types.http_response import HttpResponse
+from src.shared.http_types.http_response import HttpResponse
 from sqlalchemy.exc import IntegrityError
 from src.services.security.bcrypt.bcrypt_handle import BcryptHandle
 from src.modules.users.dtos.user_dto import UserResponseDTO, UserCreateRequestDTO

@@ -1,5 +1,5 @@
 from src.modules.catalog.repositories.catalog_repository import CatalogRepository
-from src.services.http_types.http_response import HttpResponse
+from src.shared.http_types.http_response import HttpResponse
 from src.modules.catalog.dtos.catalog_dto import CatalogNewPerfumeRequestDTO, CatalogResponseDTO, CatalogUpdatePerfumeRequestDTO
 from sqlalchemy.exc import DataError
 

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from src.modules.suppliers.composers.supplier_composer import supplier_composer
 from src.services.security.jwt.jwt_handle import token_required
-from src.services.http_types.http_requests import HttpRequest
+from src.shared.http_types.http_requests import HttpRequest
 
 
 supplier_route = Blueprint('fornecedor', __name__)

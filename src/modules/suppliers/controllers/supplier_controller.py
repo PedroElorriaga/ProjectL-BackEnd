@@ -1,5 +1,5 @@
 from src.modules.suppliers.repositories.supplier_repository import SupplierRepository
-from src.services.http_types.http_response import HttpResponse
+from src.shared.http_types.http_response import HttpResponse
 from src.modules.suppliers.dtos.supplier_dto import SupplierResponseDTO, SupplierCreateRequestDTO, SupplierUpdateRequestDTO
 
 

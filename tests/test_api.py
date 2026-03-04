@@ -4,7 +4,7 @@ import jwt
 from app import create_app
 from dotenv import load_dotenv
 from unittest.mock import patch, MagicMock
-from src.services.http_types.http_response import HttpResponse
+from src.shared.http_types.http_response import HttpResponse
 from src.modules.catalog.dtos.catalog_dto import CatalogUpdatePerfumeRequestDTO
 
 load_dotenv()

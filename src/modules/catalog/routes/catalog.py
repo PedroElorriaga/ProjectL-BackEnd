@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, request
-from src.services.http_types.http_requests import HttpRequest
+from src.shared.http_types.http_requests import HttpRequest
 from src.modules.catalog.composers.catalog_composer import catalog_composer
 from src.services.security.jwt.jwt_handle import token_required
 from werkzeug.exceptions import Unauthorized
