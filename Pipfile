@@ -25,6 +25,7 @@ pytest = "*"
 requests = "*"
 
 [scripts]
+tests = "pytest tests/. -s -v"
 app = "python app.py"
 
 [requires]

@@ -1,8 +1,8 @@
 from src.main.server.server import create_app
 from src.databases.postgres.settings.postgres_config import PostgresDbAlchemy
-from src.databases.postgres.model.catalog import Catalog
-from src.databases.postgres.model.user import User
-from src.databases.postgres.model.supplier import Supplier
+from src.modules.catalog.models.catalog import Catalog
+from src.modules.users.models.user import User
+from src.modules.suppliers.models.supplier import Supplier
 
 app = create_app()
 db = PostgresDbAlchemy.db
