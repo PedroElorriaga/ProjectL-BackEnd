@@ -16,7 +16,7 @@ class SupplierRepository:
         for item in itens:
             list_itens.append({
                 'fornecedor_id': item.fornecedor_id,
-                'razao': item.razao,
+                'razao_social': item.razao_social,
                 'email': item.email,
                 'cnpj': item.cnpj,
                 'numero_tel': item.numero_tel,
@@ -38,7 +38,7 @@ class SupplierRepository:
 
         dict_item = {
             'fornecedor_id': item.fornecedor_id,
-            'razao': item.razao,
+            'razao_social': item.razao_social,
             'email': item.email,
             'cnpj': item.cnpj,
             'numero_tel': item.numero_tel,
@@ -54,7 +54,7 @@ class SupplierRepository:
 
     def create_new_item(self, item_datas: SupplierCreateRequestDTO) -> None:
         item = Supplier(
-            razao=item_datas.razao,
+            razao_social=item_datas.razao_social,
             email=item_datas.email,
             cnpj=item_datas.cnpj,
             numero_tel=item_datas.numero_tel,
@@ -77,7 +77,7 @@ class SupplierRepository:
 
         data_dump = item_datas.model_dump()
 
-        for field in ['razao', 'email', 'cnpj', 'numero_tel', 'cep', 'rua', 'numero_endereco', 'cidade', 'uf', 'pais']:
+        for field in ['razao_social', 'email', 'cnpj', 'numero_tel', 'cep', 'rua', 'numero_endereco', 'cidade', 'uf', 'pais']:
             if field in data_dump:
                 if data_dump[field]:
                     setattr(item, field, data_dump[field])
