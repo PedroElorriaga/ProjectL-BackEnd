@@ -3,7 +3,7 @@ from typing import List, Optional
 
 
 class SupplierCreateRequestDTO(BaseModel):
-    razao: str
+    razao_social: str
     email: Optional[EmailStr] = None
     cnpj: Optional[str] = None
     numero_tel: Optional[str] = None
@@ -17,7 +17,7 @@ class SupplierCreateRequestDTO(BaseModel):
 
 class SupplierGetResponseDTO(BaseModel):
     fornecedor_id: int
-    razao: str
+    razao_social: str
     email: Optional[EmailStr]
     cnpj: Optional[str]
     numero_tel: Optional[str]
@@ -35,7 +35,7 @@ class SupplierResponseDTO(BaseModel):
 
 
 class SupplierUpdateRequestDTO(BaseModel):
-    razao: Optional[str] = None
+    razao_social: Optional[str] = None
     email: Optional[EmailStr] = None
     cnpj: Optional[str] = None
     numero_tel: Optional[str] = None

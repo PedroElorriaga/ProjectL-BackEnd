@@ -8,10 +8,9 @@ from src.services.alembic_service.alembic_util import run_migrations
 app = create_app()
 db = PostgresDbAlchemy.db
 
+run_migrations()
 
 if __name__ == '__main__':
-    run_migrations()
-
     with app.app_context():
         db.create_all()
 
