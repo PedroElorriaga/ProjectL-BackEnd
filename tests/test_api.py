@@ -315,7 +315,7 @@ def supplier_list():
     return [
         {
             'fornecedor_id': 1,
-            'razao': 'Fornecedor A',
+            'razao_social': 'Fornecedor A',
             'email': 'a@fornecedor.com',
             'cnpj': '12345678000199',
             'numero_tel': '11999999999',
@@ -328,7 +328,7 @@ def supplier_list():
         },
         {
             'fornecedor_id': 2,
-            'razao': 'Fornecedor B',
+            'razao_social': 'Fornecedor B',
             'email': 'b@fornecedor.com',
             'cnpj': '98765432000188',
             'numero_tel': '21888888888',
@@ -464,7 +464,7 @@ def test_create_supplier_with_valid_admin_token_return_201(client, admin_token):
     }
 
     payload = {
-        'razao': 'Novo Fornecedor LTDA',
+        'razao_social': 'Novo Fornecedor LTDA',
         'email': 'novo@fornecedor.com',
         'cnpj': '11223344000155',
         'numero_tel': '11912345678',
@@ -494,7 +494,7 @@ def test_create_supplier_with_non_admin_token_return_401(client, non_admin_token
     }
 
     payload = {
-        'razao': 'Novo Fornecedor LTDA',
+        'razao_social': 'Novo Fornecedor LTDA',
         'email': 'novo@fornecedor.com'
     }
 
@@ -513,7 +513,7 @@ def test_create_supplier_with_minimal_data_return_201(client, admin_token):
     }
 
     payload = {
-        'razao': 'Fornecedor Minimo LTDA'
+        'razao_social': 'Fornecedor Minimo LTDA'
     }
 
     with patch('src.modules.suppliers.repositories.supplier_repository.SupplierRepository.create_new_item') as mock_repo:
@@ -550,7 +550,7 @@ def test_create_supplier_with_invalid_email_return_500(client, admin_token):
     }
 
     payload = {
-        'razao': 'Fornecedor Invalido',
+        'razao_social': 'Fornecedor Invalido',
         'email': 'email_invalido'
     }
 
@@ -568,7 +568,7 @@ def test_create_supplier_with_full_address_return_201(client, admin_token):
     }
 
     payload = {
-        'razao': 'Fornecedor Completo S.A.',
+        'razao_social': 'Fornecedor Completo S.A.',
         'email': 'completo@fornecedor.com.br',
         'cnpj': '99887766000144',
         'numero_tel': '1133334444',
@@ -602,7 +602,7 @@ def test_update_supplier_with_valid_admin_token_return_200(client, admin_token, 
     }
 
     payload = {
-        'razao': 'Fornecedor Atualizado LTDA',
+        'razao_social': 'Fornecedor Atualizado LTDA',
         'email': 'atualizado@fornecedor.com'
     }
 
@@ -627,7 +627,7 @@ def test_update_supplier_with_non_admin_token_return_401(client, non_admin_token
     }
 
     payload = {
-        'razao': 'Fornecedor Atualizado LTDA'
+        'razao_social': 'Fornecedor Atualizado LTDA'
     }
 
     response = client.put(
@@ -649,7 +649,7 @@ def test_update_supplier_not_found_return_404(client, admin_token):
     }
 
     payload = {
-        'razao': 'Fornecedor Inexistente'
+        'razao_social': 'Fornecedor Inexistente'
     }
 
     with patch('src.modules.suppliers.repositories.supplier_repository.SupplierRepository.update_item_by_id') as mock_repo:
@@ -714,7 +714,7 @@ def test_update_supplier_all_fields_return_200(client, admin_token, supplier):
     }
 
     payload = {
-        'razao': 'Fornecedor Totalmente Atualizado',
+        'razao_social': 'Fornecedor Totalmente Atualizado',
         'email': 'novo_email@fornecedor.com',
         'cnpj': '11111111000111',
         'numero_tel': '11900001111',
