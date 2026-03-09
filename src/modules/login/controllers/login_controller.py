@@ -18,7 +18,7 @@ class LoginController:
 
             if not BcryptHandle.check_content(input_data.senha, user_credential.hash_senha):
                 return HttpResponse(LoginResponseDTO(
-                    sucess=False, message='Email ou senha incorretos'), 401)
+                    sucess=False, message='Credenciais inválidas. Verifique seu email e senha.'), 401)
 
             access_token = JwtHandle.gen_token(
                 user_credential.id, user_credential.tipo_usuario)
@@ -32,6 +32,8 @@ class LoginController:
             elif str(exc) == 'Nenhum item foi encontrado com esse EMAIL':
                 return HttpResponse(LoginResponseDTO(
                     sucess=False, message='Parece que esse EMAIL não existe'), 404)
-            print(exc)
+            elif 'validation error for LoginRequestDTO' in str(exc):
+                return HttpResponse(LoginResponseDTO(
+                    sucess=False, message='Email inválido'), 400)
             return HttpResponse(LoginResponseDTO(
                 sucess=False, message='Ops :( Algum erro inesperedo ocorreu'), 500)

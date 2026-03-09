@@ -211,10 +211,10 @@ def test_put_update_perfume_with_invalid_token_return_401_return_dict(client, pr
     assert response.get_json() == mock_repo.return_value.body
 
 
-def test_post_login_create_new_user_with_valid_credentials_return_201_content_type_json(client):
+def test_post_user_create_new_user_with_valid_credentials_return_201_content_type_json(client):
     payload = {
         'email': 'MOCKADO@email.com',
-        'senha': 'mock123@',
+        'senha': 'Mock123@',
         'tipo_usuario': 'customer',
         'nome': 'John Doe',
         'cpf': '57230621070'
@@ -229,10 +229,10 @@ def test_post_login_create_new_user_with_valid_credentials_return_201_content_ty
     assert response.content_type == 'application/json'
 
 
-def test_post_login_create_new_user_with_invalid_email_return_400_content_type_json_return_dict(client):
+def test_post_user_create_new_user_with_invalid_email_return_400_content_type_json_return_dict(client):
     payload = {
         'email': 'MOCKADO',
-        'senha': 'mock123@',
+        'senha': 'Mock123@',
         'tipo_usuario': 'customer',
         'nome': 'John Doe',
         'cpf': '57230621070'
@@ -287,6 +287,69 @@ def test_post_login_make_login_using_id_return_200_return_dict(client, user):
 
     assert response.status_code == mock_repo.return_value.response.status
     assert response.get_json() == mock_repo.return_value.response.body
+
+
+def test_post_login_invalid_credentials_wrong_password_return_401(client, user):
+    payload = {
+        'email': 'MOCKADO@email.com',
+        'senha': 'WrongPassword123!'
+    }
+
+    with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \
+            patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt:
+
+        mock_bcrypt.return_value = False
+        mock_repo.return_value = user
+        response = client.post('/login/', json=payload)
+
+    assert response.status_code == 401
+    data = response.get_json()
+    assert data['sucess'] is False
+    assert 'Credenciais inválidas' in data['message']
+
+
+def test_post_login_invalid_email_format_return_400(client):
+    payload = {
+        'email': 'not_an_email',
+        'senha': 'ValidPass123!'
+    }
+
+    response = client.post('/login/', json=payload)
+
+    assert response.status_code == 400
+    data = response.get_json()
+    assert data['sucess'] is False
+    assert 'inválido' in data['message'].lower(
+    ) or 'invalid' in data['message'].lower()
+
+
+def test_post_login_rate_limiting_exceed_5_requests_per_minute_return_429(client):
+    """Test that more than 5 requests per minute return 429 Too Many Requests"""
+    payload = {
+        'email': 'MOCKADO@email.com',
+        'senha': 'mock123@'
+    }
+
+    with patch('src.modules.users.repositories.user_repository.UserRepository.get_item') as mock_repo, \
+            patch('src.services.security.bcrypt.bcrypt_handle.BcryptHandle.check_content') as mock_bcrypt, \
+            patch('src.services.security.jwt.jwt_handle.JwtHandle.gen_token') as mock_jwt:
+
+        mock_bcrypt.return_value = True
+        mock_jwt.return_value = 'MOCKjwt'
+        mock_repo.return_value.id = 1
+        mock_repo.return_value.tipo_usuario = 'customer'
+        mock_repo.return_value.hash_senha = 'mock123@'
+
+        # Make 5 successful requests - should all return 200
+        for i in range(5):
+            response = client.post('/login/', json=payload)
+
+        # 6th request should be rate limited and return 429
+        response = client.post('/login/', json=payload)
+        assert response.status_code == 429
+        data = response.get_json()
+        assert data['sucess'] is False
+        assert 'Muitas tentativas' in data['message']
 
 
 # =============================================================================
