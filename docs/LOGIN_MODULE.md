@@ -1,6 +1,6 @@
 # Login Module
 
-The Login module handles user authentication, validating credentials and generating JWT tokens for authorized access to protected resources.
+The Login module handles user authentication by validating credentials and generating JWT tokens for authorized access to protected resources.
 
 ## Structure
 
@@ -28,6 +28,11 @@ Request body for login:
     "senha": str          # Required - password
 }
 ```
+
+Current validation behavior:
+- `email` uses `EmailStr`
+- `senha` is required
+- Invalid email returns `400` with message `Email inválido`
 
 ### LoginResponseDTO
 Response format:
@@ -65,9 +70,15 @@ Authenticate user with email and password.
 }
 ```
 
+**Security behavior:**
+- Rate limit: `5` requests per `60` seconds per IP (`429` on exceed)
+- Generic invalid credential message for wrong password: `Credenciais inválidas. Verifique seu email e senha.`
+
 **Error Responses:**
-- `401` - Email ou senha incorretos
-- `404` - Email não existe
+- `400` - Invalid request payload (ex.: invalid email)
+- `401` - Invalid credentials
+- `404` - User ID or email not found
+- `429` - Too many login attempts from same IP
 - `500` - Internal server error
 
 ---
@@ -97,7 +108,7 @@ Authenticate user by ID instead of email.
 ```
 
 **Error Responses:**
-- `401` - Senha incorreta
+- `401` - Credenciais inválidas
 - `404` - ID não existe
 - `500` - Internal server error
 
@@ -126,3 +137,13 @@ Protected endpoints validate the token using the `@token_required` decorator.
 - **Password Hashing:** Passwords are stored as bcrypt hashes
 - **JWT Tokens:** Secure token-based authentication
 - **Role-based Access:** Token contains user role for authorization checks
+- **Rate Limiting:** `POST /login` protected with IP-based throttling (`5/min`)
+
+## Tests Implemented
+
+Current login coverage in `tests/test_api.py` includes:
+- Successful login with email/password (`200`)
+- Successful login using user ID (`200`)
+- Wrong password returns `401`
+- Invalid email format returns `400`
+- Rate-limiting behavior returns `429` on 6th request within the same minute
